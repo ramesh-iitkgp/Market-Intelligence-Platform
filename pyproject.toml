@@ -18,5 +18,14 @@ extend-exclude = [".venv", "build", "dist"]
 select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
-testpaths = ["backend/tests", "tests"]
-addopts = "-ra"
+testpaths = ["tests"]
+addopts = "-ra -n auto --cov=backend --cov-report=term-missing --cov-report=xml --cov-fail-under=90"
+asyncio_mode = "auto"
+markers = [
+    "unit: marks tests as unit tests (fast, no external dependencies)",
+    "integration: marks tests as integration tests (slower, require external services like DB)",
+    "api: marks tests as API tests",
+    "performance: marks tests as performance tests",
+    "benchmark: marks tests as benchmark tests",
+    "slow: marks tests as slow running",
+]
