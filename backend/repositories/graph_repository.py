@@ -1,6 +1,7 @@
 """Repositories for accessing and manipulating the Knowledge Graph."""
 
 from __future__ import annotations
+import json
 
 import uuid
 from typing import Sequence
@@ -85,6 +86,24 @@ class EntityRepository:
             )
             .distinct()
             .limit(limit)
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().all()
+
+    async def get_nodes_for_event(self, event_id: int) -> Sequence[EntityNode]:
+        """
+        Retrieve all entity nodes connected to a specific historical event.
+
+        This works by finding relationship edges where the event ID is stored
+        in the provenance metadata.
+        """
+        # This query finds all nodes that are either a source or a target
+        # in a relationship originating from the given event.
+        stmt = (
+            select(EntityNode)
+            .join(RelationshipEdge, or_(EntityNode.id == RelationshipEdge.source_node_id, EntityNode.id == RelationshipEdge.target_node_id))
+            .where(RelationshipEdge.provenance["event_id"].astext == str(event_id))
+            .distinct()
         )
         result = await self._session.execute(stmt)
         return result.scalars().all()
