@@ -20,7 +20,7 @@ from backend.repositories.graph_repository import (
     RelationshipRepository,
 )
 from backend.schemas.ai_schemas import GraphExtractionResult
-from backend.services.gemini_service import GeminiService
+from backend.services.llm.base import LLMProvider
 
 class EntityResolutionService:
     """
@@ -105,11 +105,11 @@ class RelationshipExtractionService:
 
     def __init__(
         self,
-        gemini_service: GeminiService,
+        llm_provider: LLMProvider,
         logger: logging.Logger | None = None,
     ):
         """Initialize the service."""
-        self._gemini_service = gemini_service
+        self._llm_provider = llm_provider
         self._logger = logger or logging.getLogger(__name__)
 
     async def extract_graph_from_text(
@@ -132,7 +132,7 @@ class RelationshipExtractionService:
         schema = GraphExtractionResult.model_json_schema()
 
         try:
-            response_json = self._gemini_service.generate_json(
+            response_json = self._llm_provider.generate_json(
                 prompt, schema=schema, temperature=0.0
             )
             validated_result = GraphExtractionResult.model_validate(response_json)

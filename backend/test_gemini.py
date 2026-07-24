@@ -12,7 +12,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from backend.config.settings import get_settings
 from backend.core.exceptions import ConfigurationError, GeminiServiceError
 from backend.core.logger import configure_logging, get_logger
-from backend.services.gemini_service import GeminiService
+from backend.services.llm.gemini import GeminiProvider
 
 
 def main() -> int:
@@ -22,8 +22,8 @@ def main() -> int:
         configure_logging(settings)
         logger = get_logger(__name__)
         logger.info("Testing Gemini connection with model '%s'.", settings.gemini_model)
-
-        response = GeminiService(settings=settings, logger=logger).generate_text(
+        # Note: This test now uses GeminiProvider directly.
+        response = GeminiProvider(settings=settings, logger=logger).generate_text(
             "In one sentence, explain the value of market intelligence."
         )
     except ConfigurationError as error:

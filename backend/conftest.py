@@ -15,6 +15,8 @@ pytest_plugins = [
     "tests.fixtures.events",
     "tests.fixtures.postgres",
     "tests.fixtures.repositories",
+    "tests.factories.rag",
+    "tests.factories.graph",
 ]
 
 

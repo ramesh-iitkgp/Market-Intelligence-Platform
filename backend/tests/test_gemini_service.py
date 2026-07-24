@@ -12,7 +12,7 @@ import pytest
 from google import genai
 from backend.config.settings import Settings
 from backend.core.exceptions import GeminiResponseError, GeminiServiceError
-from backend.services.gemini_service import GeminiService
+from backend.services.llm.gemini import GeminiProvider
 
 
 class FakeModels:
@@ -59,9 +59,9 @@ def settings() -> Settings:
     )
 
 
-def build_service(response: FakeResponse, settings: Settings) -> GeminiService:
+def build_service(response: FakeResponse, settings: Settings) -> GeminiProvider:
     """Create a service backed by a deterministic fake client."""
-    return GeminiService(
+    return GeminiProvider(
         settings=replace(settings),
         client=FakeClient(response=response),
         logger=logging.getLogger("test.gemini"),
@@ -104,7 +104,7 @@ def test_invalid_json_response_raises_domain_error(settings: Settings) -> None:
 
 def test_provider_failure_raises_domain_error(settings: Settings) -> None:
     """Provider exceptions should not leak through the service boundary."""
-    service = GeminiService(
+    service = GeminiProvider(
         settings=settings,
         client=FakeClient(error=genai.APIError("network error")),
         logger=logging.getLogger("test.gemini"),

@@ -1,5 +1,5 @@
 """Application services."""
 
-from backend.services.gemini_service import GeminiService
+from backend.services.llm.gemini import GeminiProvider
 
-__all__ = ["GeminiService"]
+__all__ = ["GeminiProvider"]

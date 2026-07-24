@@ -1,1 +1,1 @@
-"""Market Intelligence Platform backend package."""
+"""Concrete implementations of ReasoningStrategy."""

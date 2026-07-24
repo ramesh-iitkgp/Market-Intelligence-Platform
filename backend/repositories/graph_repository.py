@@ -108,6 +108,24 @@ class EntityRepository:
         result = await self._session.execute(stmt)
         return result.scalars().all()
 
+    async def get_neighbor_edges(self, node_id: uuid.UUID) -> Sequence[RelationshipEdge]:
+        """Retrieve all relationship edges connected to a given node."""
+        stmt = (
+            select(RelationshipEdge)
+            .options(
+                selectinload(RelationshipEdge.source_node),
+                selectinload(RelationshipEdge.target_node),
+            )
+            .where(
+                or_(
+                    RelationshipEdge.source_node_id == node_id,
+                    RelationshipEdge.target_node_id == node_id,
+                )
+            )
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().unique().all()
+
 
 class RelationshipRepository:
     """Provides data access for relationship edges in the graph."""
